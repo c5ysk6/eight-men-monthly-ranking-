@@ -33,10 +33,19 @@ tbody tr:last-child td{border-bottom:none}
 .rb{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;border-radius:50%;font-size:10px;font-weight:700;flex-shrink:0}
 .r1{background:#FFD700;color:#5a4200}.r2{background:#C0C0C0;color:#333}.r3{background:#CD7F32;color:#fff}.rn{background:#eef0f3;color:#888}
 .nm{font-weight:500}
+.nm-sub{display:block;font-size:10px;color:#888;font-weight:400;margin-top:1px}
 .pm{font-size:10px;color:#aaa;font-weight:400;margin-left:4px}
 .prod{font-size:10px;color:#888}
 .rc-up{color:#30b86c}.rc-dn{color:#ff3b30}.rc-eq{color:#aaa}
 footer{text-align:center;padding:16px;font-size:10px;color:#ccc}
+/* モバイル最適化 */
+@media(max-width:480px){
+  .hide-sp{display:none}
+  tbody td,.nm{font-size:11px}
+  thead th{font-size:10px;padding:6px 5px}
+  tbody td{padding:9px 5px}
+  .rb{min-width:20px;height:20px;font-size:9px}
+}
 </style>
 </head>
 <body>
@@ -138,8 +147,8 @@ function render() {
   <div class="tbl-wrap"><table>
   <thead><tr>
     <th>順位</th><th>スタッフ</th>
-    ${isAll ? '<th>店舗</th>' : ''}
-    <th>指名売上</th><th>指名数</th><th>${cmpHdr}</th>
+    <th class="hide-sp">指名数</th>
+    <th>指名売上</th><th>${cmpHdr}</th>
   </tr></thead><tbody>`;
 
   rows.forEach(item => {
@@ -148,12 +157,13 @@ function render() {
       : `<span class="rb rn">${item.rank}</span>`;
     const pm = (!d.isComplete && item.prevMonthRank)
       ? `<span class="pm">先月${item.prevMonthRank}位</span>` : '';
+    // スマホでは店舗名を名前の下に表示、PCでは別列
+    const storeSub = isAll ? `<span class="nm-sub">${item.storeName}</span>` : '';
     html += `<tr>
       <td>${rb}</td>
-      <td><span class="nm">${item.name}</span>${pm}</td>
-      ${isAll ? `<td>${item.storeName}</td>` : ''}
+      <td><span class="nm">${item.name}</span>${pm}${storeSub}</td>
+      <td class="hide-sp">${item.noms}人</td>
       <td>¥${item.sales.toLocaleString()}</td>
-      <td>${item.noms}人</td>
       <td>${diff(item.prevRank, item.rank)}</td>
     </tr>`;
   });
@@ -167,18 +177,20 @@ function render() {
     <div class="date-range">📅 ${d.dateRange}</div>
     <div class="tbl-wrap"><table>
     <thead><tr>
-      <th>順位</th><th>店舗</th><th>総売上</th><th>生産性/人</th><th>${cmpHdr}</th>
+      <th>順位</th><th>店舗</th><th>総売上</th><th class="hide-sp">生産性/人</th><th>${cmpHdr}</th>
     </tr></thead><tbody>`;
 
     d.store.forEach(item => {
       const rb = item.rank <= 3
         ? `<span class="rb r${item.rank}">${item.rank}</span>`
         : `<span class="rb rn">${item.rank}</span>`;
+      // スマホでは生産性を店舗名の下に表示
+      const prodSub = `<span class="nm-sub">生産性 ¥${item.productivity.toLocaleString()}（${item.stylistCount}人）</span>`;
       html += `<tr>
         <td>${rb}</td>
-        <td>${item.storeName}</td>
+        <td>${item.storeName}${prodSub}</td>
         <td>¥${item.sales.toLocaleString()}</td>
-        <td><span class="prod">¥${item.productivity.toLocaleString()}<br>${item.stylistCount}人</span></td>
+        <td class="hide-sp"><span class="prod">¥${item.productivity.toLocaleString()}<br>${item.stylistCount}人</span></td>
         <td>${diff(item.prevRank, item.rank)}</td>
       </tr>`;
     });
