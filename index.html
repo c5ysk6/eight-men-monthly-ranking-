@@ -177,7 +177,7 @@ function render() {
     <div class="date-range">📅 ${d.dateRange}</div>
     <div class="tbl-wrap"><table>
     <thead><tr>
-      <th>順位</th><th>店舗</th><th>総客数</th><th>指名数</th><th>${cmpHdr}</th>
+      <th>順位</th><th>店舗</th><th>総客数</th><th>指名数</th><th>総売上</th><th>${cmpHdr}</th>
     </tr></thead><tbody>`;
 
     d.store.forEach(item => {
@@ -186,9 +186,10 @@ function render() {
         : `<span class="rb rn">${item.rank}</span>`;
       html += `<tr>
         <td>${rb}</td>
-        <td>${item.storeName}<span class="nm-sub">¥${item.perPerson.toLocaleString()}/人 (${item.stylistCount}人)</span></td>
+        <td>${item.storeName}</td>
         <td>${item.customers}人</td>
         <td>${item.nominated}人<span class="nm-sub">指名率 ${item.nomRate}%</span></td>
+        <td>¥${item.sales.toLocaleString()}<span class="nm-sub">¥${item.perPerson.toLocaleString()}/人 (${item.stylistCount}人)</span></td>
         <td>${diff(item.prevRank, item.rank)}</td>
       </tr>`;
     });
