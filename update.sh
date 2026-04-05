@@ -8,7 +8,9 @@ echo "===== $(date '+%Y-%m-%d %H:%M:%S') 開始 =====" >> "$LOG"
 python3 "/Users/c5ysk6/Dropbox (個人)/GM/00_開発・自動化/売上ダッシュボード/スタッフランキング/generate_ranking.py" >> "$LOG" 2>&1
 
 # GitHubにpush
-cd /Users/c5ysk6/Dropbox (個人)/GM/00_開発・自動化/売上ダッシュボード/スタッフランキング/eight-men-monthly-ranking
+RANKING_DIR="/Users/c5ysk6/Dropbox (個人)/GM/00_開発・自動化/売上ダッシュボード/スタッフランキング"
+cp "$RANKING_DIR/eight-men-monthly-ranking/index.html" "$RANKING_DIR/em-ranking/index.html" >> "$LOG" 2>&1
+cd "$RANKING_DIR/em-ranking"
 git add index.html >> "$LOG" 2>&1
 git commit -m "update $(date '+%Y-%m-%d')" >> "$LOG" 2>&1
 git push >> "$LOG" 2>&1
