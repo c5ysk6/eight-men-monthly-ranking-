@@ -1,7 +1,7 @@
 #!/bin/bash
 # EIGHT MEN ランキング 毎日自動更新スクリプト
 
-BASE="/Users/c5ysk6/Dropbox (個人)/GM/05_売上・数値管理/ランキング"
+BASE="/Users/c5ysk6/Dropbox (個人)/GM/00_開発・自動化/売上ダッシュボード/ランキング"
 LOG="$BASE/em-ranking/update.log"
 echo "===== $(date '+%Y-%m-%d %H:%M:%S') 開始 =====" >> "$LOG"
 
