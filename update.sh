@@ -1,15 +1,15 @@
 #!/bin/bash
 # EIGHT MEN ランキング 毎日自動更新スクリプト
 
-LOG="/Users/c5ysk6/Dropbox (個人)/GM/00_開発・自動化/売上ダッシュボード/ランキング/スタッフランキング/em-ranking/update.log"
+BASE="/Users/c5ysk6/Dropbox (個人)/GM/00_開発・自動化/売上ダッシュボード/ランキング"
+LOG="$BASE/em-ranking/update.log"
 echo "===== $(date '+%Y-%m-%d %H:%M:%S') 開始 =====" >> "$LOG"
 
 # HTMLを生成
-python3 "/Users/c5ysk6/Dropbox (個人)/GM/00_開発・自動化/売上ダッシュボード/ランキング/スタッフランキング/generate_ranking.py" >> "$LOG" 2>&1
+python3 "$BASE/ランキング生成.py" >> "$LOG" 2>&1
 
 # GitHubにpush
-RANKING_DIR="/Users/c5ysk6/Dropbox (個人)/GM/00_開発・自動化/売上ダッシュボード/ランキング/スタッフランキング"
-cd "$RANKING_DIR/em-ranking"
+cd "$BASE/em-ranking"
 git add index.html >> "$LOG" 2>&1
 git commit -m "update $(date '+%Y-%m-%d')" >> "$LOG" 2>&1
 git push >> "$LOG" 2>&1
