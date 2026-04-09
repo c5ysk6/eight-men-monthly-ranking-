@@ -49,21 +49,22 @@ tbody tr:last-child td{border-bottom:none}
 .pm{font-size:10px;color:#aaa;font-weight:400;margin-left:4px}
 .rc-up{color:#30b86c}.rc-dn{color:#ff3b30}.rc-eq{color:#aaa}
 
-/* 売上予測カード */
+/* 売上予測テーブル */
 .fc-sec{background:#fff;margin:10px 12px;border-radius:14px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.07)}
 .fc-sec-hd{background:linear-gradient(135deg,#1a1a2e,#2d2d4e);color:#fff;padding:11px 14px;font-size:13px;font-weight:700}
-.fc-card{border-bottom:1px solid #f0f2f5;padding:12px 14px 0}
-.fc-card:last-child{border-bottom:none}
-.fc-row{display:grid;grid-template-columns:1fr auto auto auto auto;gap:4px 8px;align-items:start;margin-bottom:8px}
-.fc-name{font-size:12px;font-weight:600;padding-top:2px}
-.fc-cell{display:flex;flex-direction:column;align-items:center;text-align:center}
-.fc-lbl{display:block;font-size:9px;color:#aaa;font-weight:600;letter-spacing:.3px;margin-bottom:2px}
-.fc-val{font-size:11px;font-weight:600;color:#1a1a1a}
-.fc-bar-row{display:flex;align-items:center;gap:8px;padding-bottom:10px}
+.fc-tbl{display:grid;grid-template-columns:2fr 1fr 1.8fr 1.8fr 1.8fr;padding:0 14px}
+.fc-th{font-size:9px;color:#aaa;font-weight:600;letter-spacing:.3px;text-align:center;padding:8px 4px 6px;border-bottom:2px solid #f0f2f5}
+.fc-th:first-child{text-align:left}
+.fc-td{font-size:11px;font-weight:600;color:#1a1a1a;text-align:center;padding:10px 4px 4px}
+.fc-td:first-child{font-size:12px;text-align:left}
+.fc-bar-span{grid-column:1/-1;padding:2px 0 10px;border-bottom:1px solid #f0f2f5}
+.fc-bar-span:last-child{border-bottom:none}
+.fc-no-target{grid-column:1/-1;font-size:10px;color:#ccc;padding:2px 0 10px;text-align:right;border-bottom:1px solid #f0f2f5}
+.fc-no-target:last-child{border-bottom:none}
+.fc-bar-row{display:flex;align-items:center;gap:8px}
 .fc-bar-bg{flex:1;height:5px;background:#eef0f3;border-radius:3px;overflow:hidden}
 .fc-bar-fill{height:100%;border-radius:3px}
 .fc-pct{font-size:10px;color:#999;min-width:30px;text-align:right}
-.fc-no-target{font-size:10px;color:#ccc;padding-bottom:10px;text-align:right}
 .fc-info{font-size:11px;color:#888;margin:8px 12px 0;padding-bottom:2px}
 .fc-empty{text-align:center;padding:30px;color:#aaa;font-size:13px}
 
@@ -74,8 +75,9 @@ footer{text-align:center;padding:16px;font-size:10px;color:#ccc}
   thead th{font-size:10px;padding:6px 5px}
   tbody td{padding:9px 5px}
   .rb{min-width:20px;height:20px;font-size:9px}
-  .fc-row{gap:4px 6px}
-  .fc-val{font-size:11px}
+  .fc-tbl{padding:0 8px}
+  .fc-td{font-size:10px;padding:8px 2px 4px}
+  .fc-td:first-child{font-size:11px}
 }
 </style>
 </head>
@@ -282,46 +284,33 @@ function renderForecast() {
 
     const storeName = STORES[sid] || sid;
     html += `<div class="fc-sec"><div class="fc-sec-hd">🏪 ${storeName}</div>`;
+    html += `<div class="fc-tbl">`;
+    html += `<div class="fc-th">スタッフ</div><div class="fc-th">指名数</div><div class="fc-th">指名売上</div><div class="fc-th">目標</div><div class="fc-th">着地予測</div>`;
 
     items.forEach(item => {
       const target   = item.target || 0;
       const pct      = target > 0 ? Math.min(Math.round(item.sales / target * 100), 100) : 0;
       const barColor = pct >= 100 ? '#30b86c' : pct >= 80 ? '#f0a500' : '#ff6b6b';
 
-      html += `<div class="fc-card">
-        <div class="fc-row">
-          <div class="fc-name">${item.name}</div>
-          <div class="fc-cell">
-            <span class="fc-lbl">指名数</span>
-            <span class="fc-val">${item.noms}件</span>
-          </div>
-          <div class="fc-cell">
-            <span class="fc-lbl">指名売上</span>
-            <span class="fc-val">¥${item.sales.toLocaleString()}</span>
-          </div>
-          <div class="fc-cell">
-            <span class="fc-lbl">目標</span>
-            <span class="fc-val">${target ? '¥' + target.toLocaleString() : '－'}</span>
-          </div>
-          <div class="fc-cell">
-            <span class="fc-lbl">着地予測</span>
-            <span class="fc-val">¥${item.forecast.toLocaleString()}</span>
-          </div>
-        </div>`;
+      html += `<div class="fc-td">${item.name}</div>
+        <div class="fc-td">${item.noms}件</div>
+        <div class="fc-td">¥${item.sales.toLocaleString()}</div>
+        <div class="fc-td">${target ? '¥' + target.toLocaleString() : '－'}</div>
+        <div class="fc-td">¥${item.forecast.toLocaleString()}</div>`;
 
       if (target > 0) {
-        html += `<div class="fc-bar-row">
-          <div class="fc-bar-bg"><div class="fc-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
-          <span class="fc-pct">${pct}%</span>
+        html += `<div class="fc-bar-span">
+          <div class="fc-bar-row">
+            <div class="fc-bar-bg"><div class="fc-bar-fill" style="width:${pct}%;background:${barColor}"></div></div>
+            <span class="fc-pct">${pct}%</span>
+          </div>
         </div>`;
       } else {
         html += `<div class="fc-no-target">目標未設定</div>`;
       }
-
-      html += `</div>`;
     });
 
-    html += `</div>`;
+    html += `</div></div>`;
   });
 
   document.getElementById('fc-content').innerHTML = html;
